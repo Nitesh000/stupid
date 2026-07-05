@@ -7,6 +7,7 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 import { DBConnection } from "./config/db";
+import { errorHandler, notFoundHandler } from "./plugins/error.plugin";
 
 const logger: FastifyServerOptions["logger"] =
   env.NODE_ENV == "production"
@@ -28,6 +29,10 @@ const logger: FastifyServerOptions["logger"] =
 const app = fastify({
   logger,
 });
+
+// global error handlers
+app.setErrorHandler(errorHandler);
+app.setNotFoundHandler(notFoundHandler);
 
 const dbConnection = new DBConnection(app.log);
 export const { db, pool } = dbConnection.getConnection();

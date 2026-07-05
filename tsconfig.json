@@ -1,5 +1,16 @@
 {
   "files": [],
+  "compilerOptions": {
+    "types": ["node"],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "lib": ["ES2022"]
+  },
   "references": [
     { "path": "./apps/api" },
     { "path": "./apps/web" }

@@ -1,4 +1,6 @@
 // drizzle.config.ts
+/// <reference types="node" />
+
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
@@ -7,6 +9,6 @@ export default defineConfig({
   schema: "./packages/db/schema/index.ts", // Path to your schema file
   dialect: "postgresql", // Your database dialect
   dbCredentials: {
-    url: process.env.DATABASE_URL!, // Connection string from .env
+    url: process.env.PG_DB_URL!, // Connection string from .env
   },
 });

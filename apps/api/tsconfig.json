@@ -4,7 +4,7 @@
     "allowImportingTsExtensions": true,
     "paths": {
       "@repo/utils/*": ["../../packages/utils/src/*"],
-      "@repo/db/*": ["../../packages/db/src/*"],
+      "@repo/db/*": ["../../packages/db/*"],
       "@repo/validation/*": ["../../packages/validation/*"]
     }
   },

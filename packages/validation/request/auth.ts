@@ -19,3 +19,5 @@ export const createUserBody = z.object({
       message: "Must contain a symbol",
     }),
 });
+
+export type createUserBodyType = z.infer<typeof createUserBody>;

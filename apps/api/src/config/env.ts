@@ -13,6 +13,9 @@ const envSchema = z.object({
     .enum(["development", "staging", "production", "local"])
     .default("local"),
   PG_DB_URL: z.url({ message: "Invlid database url format" }),
+  JWT_SECRET: z.string().default("<jwt-secret-string>"),
+  BETTER_AUTH_URL: z.url({ message: "Invalid url" }),
+  BETTER_AUTH_SECRET: z.string({ message: "Better auth secret needed" }),
 });
 
 const parseEnv = envSchema.safeParse(process.env);

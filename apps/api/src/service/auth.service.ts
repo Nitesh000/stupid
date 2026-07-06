@@ -1,5 +1,8 @@
 import { usersTable } from "@repo/db/schema";
-import type { createUserBodyType } from "@repo/validation/request/auth";
+import type {
+  createUserBodyType,
+  userSignInType,
+} from "@repo/validation/request/auth";
 import { db } from "..";
 import { eq } from "drizzle-orm";
 import argon2 from "argon2";
@@ -33,4 +36,6 @@ export class AuthService {
 
     return user == undefined ? null : user[0];
   }
+
+  static async signiInUser(data: userSignInType) {}
 }

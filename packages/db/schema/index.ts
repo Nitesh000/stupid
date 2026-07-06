@@ -12,7 +12,8 @@ export const usersTable = pgTable("users", {
   name: text().notNull(),
   email: text().notNull(),
   profilePic: text(),
-  password: varchar({ length: 500 }),
+  password: varchar(),
+  refreshToken: varchar("refresh_token"),
   lastLoggedIn: time("last_logged_in"),
   loginCount: integer("login_count").default(1),
 });

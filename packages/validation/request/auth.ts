@@ -21,3 +21,10 @@ export const createUserBody = z.object({
 });
 
 export type createUserBodyType = z.infer<typeof createUserBody>;
+
+export const userSignIn = z.object({
+  email: z.email("Invalid email format").trim(),
+  password: z.string().nonempty(),
+});
+
+export type userSignInType = z.infer<typeof userSignIn>;

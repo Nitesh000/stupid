@@ -13,9 +13,9 @@ export class DrizzleDB {
   }: {
     url: string;
     poolConfig?: PoolConfig;
-    logger: { info: any; error: any };
+    logger?: { info: any; error: any };
   }) {
-    this.logger = logger;
+    this.logger = logger ?? { info: () => {}, error: () => {} };
     try {
       // drizzle init
       this.db = drizzle({

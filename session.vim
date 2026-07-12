@@ -10,34 +10,33 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 let s:shortmess_save = &shortmess
 set shortmess+=aoO
-badd +28 apps/api/src/routes/auth.route.ts
-badd +21 ~/Developer/Work/personalWork/websites/stupid/packages/validation/request/auth.ts
-badd +12 packages/db/schema/index.ts
-badd +40 apps/api/src/index.ts
-badd +10 drizzle.config.ts
-badd +63 .agents/repo.md
-badd +49 apps/api/src/plugins/error.plugin.ts
-badd +5 apps/api/src/config/err.ts
-badd +31 ~/Developer/Work/personalWork/websites/stupid/node_modules/.pnpm/@fastify+error@4.2.0/node_modules/@fastify/error/types/index.d.ts
-badd +23 .env
-badd +7 ~/Developer/Work/personalWork/websites/stupid/node_modules/.pnpm/fastify-type-provider-zod@7.0.0_@fastify+swagger@9.7.0_fastify@5.9.0_openapi-types@12.1.3_zod@4.4.3/node_modules/fastify-type-provider-zod/dist/esm/core.d.ts
-badd +3 tsconfig.json
-badd +1 apps/api/tsconfig.json
-badd +20 packages/tsconfig/base.json
-badd +7 packages/tsconfig/node.json
+badd +16 ~/Developer/Work/personalWork/websites/stupid/apps/api/src/lib/auth.ts
+badd +0 package.json
+badd +7 apps/web/tsconfig.json
+badd +1 packages/db/src/index.ts
+badd +1 packages/db/config.ts
+badd +4 packages/db/schema/index.ts
+badd +1 packages/db/client/index.ts
+badd +11 apps/web/src/index.tsx
+badd +2 ~/Developer/Work/personalWork/websites/stupid/apps/web/src/App.tsx
+badd +2 packages/tsconfig/web.json
+badd +12 packages/tsconfig/base.json
+badd +1 packages/tsconfig/node.json
+badd +5 apps/web/src/lib/auth-client.ts
+badd +24 apps/web/src/config/env.ts
+badd +32 apps/api/src/config/env.ts
+badd +46 .env
+badd +22 ~/Developer/Work/personalWork/websites/stupid/node_modules/.pnpm/@solidjs+router@0.16.1_solid-js@1.9.14/node_modules/@solidjs/router/dist/routers/components.d.ts
+badd +2 ~/Developer/Work/personalWork/websites/stupid/apps/web/src/pages/home/Home.tsx
 argglobal
 %argdel
-edit apps/api/src/plugins/error.plugin.ts
+edit ~/Developer/Work/personalWork/websites/stupid/apps/web/src/App.tsx
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
 1wincmd h
-wincmd _ | wincmd |
-split
-1wincmd k
-wincmd w
 wincmd w
 let &splitbelow = s:save_splitbelow
 let &splitright = s:save_splitright
@@ -48,13 +47,10 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe '1resize ' . ((&lines * 30 + 31) / 62)
 exe 'vert 1resize ' . ((&columns * 94 + 94) / 189)
-exe '2resize ' . ((&lines * 29 + 31) / 62)
 exe 'vert 2resize ' . ((&columns * 94 + 94) / 189)
-exe 'vert 3resize ' . ((&columns * 94 + 94) / 189)
 argglobal
-balt packages/tsconfig/base.json
+balt ~/Developer/Work/personalWork/websites/stupid/apps/web/src/pages/home/Home.tsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -65,42 +61,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 49 - ((29 * winheight(0) + 15) / 30)
+let s:l = 2 - ((1 * winheight(0) + 30) / 60)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 49
-normal! 02|
+keepjumps 2
+normal! 032|
 wincmd w
 argglobal
-if bufexists(fnamemodify("apps/api/src/index.ts", ":p")) | buffer apps/api/src/index.ts | else | edit apps/api/src/index.ts | endif
+if bufexists(fnamemodify("apps/web/src/index.tsx", ":p")) | buffer apps/web/src/index.tsx | else | edit apps/web/src/index.tsx | endif
 if &buftype ==# 'terminal'
-  silent file apps/api/src/index.ts
+  silent file apps/web/src/index.tsx
 endif
-balt ~/Developer/Work/personalWork/websites/stupid/node_modules/.pnpm/fastify-type-provider-zod@7.0.0_@fastify+swagger@9.7.0_fastify@5.9.0_openapi-types@12.1.3_zod@4.4.3/node_modules/fastify-type-provider-zod/dist/esm/core.d.ts
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 42 - ((26 * winheight(0) + 14) / 29)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 42
-normal! 0
-wincmd w
-argglobal
-if bufexists(fnamemodify("drizzle.config.ts", ":p")) | buffer drizzle.config.ts | else | edit drizzle.config.ts | endif
-if &buftype ==# 'terminal'
-  silent file drizzle.config.ts
-endif
-balt tsconfig.json
+balt ~/Developer/Work/personalWork/websites/stupid/apps/web/src/App.tsx
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -116,14 +89,10 @@ if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 10
-normal! 010|
+normal! 08|
 wincmd w
-3wincmd w
-exe '1resize ' . ((&lines * 30 + 31) / 62)
 exe 'vert 1resize ' . ((&columns * 94 + 94) / 189)
-exe '2resize ' . ((&lines * 29 + 31) / 62)
 exe 'vert 2resize ' . ((&columns * 94 + 94) / 189)
-exe 'vert 3resize ' . ((&columns * 94 + 94) / 189)
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

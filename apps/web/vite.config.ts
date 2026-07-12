@@ -1,18 +1,17 @@
-import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
-import solid from "vite-plugin-solid";
+import vue from "@vitejs/plugin-vue";
+import { fileURLToPath, URL } from "node:url";
 
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [vue()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@repo/utils": fileURLToPath(
-        new URL("../../packages/utils/src", import.meta.url),
+        new URL("../../packages/utils", import.meta.url),
       ),
-      "@repo/db": fileURLToPath(
-        new URL("../../packages/db/src", import.meta.url),
-      ),
+      "@repo/db": fileURLToPath(new URL("../../packages/db", import.meta.url)),
     },
   },
 });

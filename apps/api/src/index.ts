@@ -2,6 +2,7 @@ import fastify, { type FastifyServerOptions } from "fastify";
 import cors from "@fastify/cors";
 import { env } from "./config/env";
 import { healthRoutes } from "./routes/health.route";
+import { leaderboardRoutes } from "./routes/leaderboard.route";
 import {
   serializerCompiler,
   validatorCompiler,
@@ -10,6 +11,8 @@ import { closeDB } from "./lib/db";
 import { auth } from "./lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { errorHandler, notFoundHandler } from "./plugins/error.plugin";
+import { connectRedis, closeRedis } from "./lib/redis";
+import { initSocketIO } from "./lib/socket";
 
 const logger: FastifyServerOptions["logger"] =
   env.NODE_ENV == "production"
@@ -48,6 +51,7 @@ const registerRoutes = async () => {
     });
 
     await app.register(healthRoutes, { prefix: "/api" });
+    await app.register(leaderboardRoutes, { prefix: "/api" });
 
     // Better Auth Catch-All route
     app.all("/api/auth/*", async (request, reply) => {
@@ -95,6 +99,7 @@ const gracefullyShutdown = async (signal: string) => {
         await app.close();
         app.log.info("[APP] Fastify server closed");
 
+        await closeRedis();
         await closeDB();
 
         app.log.info("[APP] Graceful shutdown completed");
@@ -145,12 +150,20 @@ const registerGracefulShutdown = async () => {
 const startServer = async () => {
   try {
     await registerRoutes();
+    await connectRedis();
 
     registerGracefulShutdown();
 
     await app.listen({
       port: env.PORT,
     });
+
+    // Initialise Socket.io on the HTTP server after Fastify starts
+    initSocketIO(app.server, [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:3000",
+    ]);
 
     app.log.info(
       {

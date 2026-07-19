@@ -13,14 +13,18 @@
   "type": "module",
   "dependencies": {
     "@fastify/cors": "^11.3.0",
+    "@types/socket.io": "^3.0.2",
     "argon2": "^0.44.0",
     "better-auth": "^1.6.23",
     "fastify": "^5.9.0",
     "fastify-better-auth": "^1.2.0",
     "fastify-type-provider-zod": "^7.0.0",
-    "jsonwebtoken": "^9.0.3"
+    "ioredis": "^5.11.1",
+    "jsonwebtoken": "^9.0.3",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@types/ioredis": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.0",
     "pino-pretty": "^13.1.3",

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { authClient } from "@/lib/auth-client";
 import { providerMemes, generalMemes, type Meme } from "@/config/memes";
 import { animate } from "animejs";
+import { connectSocket, disconnectSocket } from "@/lib/socket";
 import {
   LogOut,
   Trophy,
@@ -20,11 +21,10 @@ const router = useRouter();
 const user = ref<any>(null);
 const activeMeme = ref<Meme | null>(null);
 const activeGeneralMeme = ref<Meme | null>(null);
-
-// For Step 2, this is static. In Step 3, it will be real-time via Socket.io
 const onlineCount = ref(1);
 
 const handleLogout = async () => {
+  disconnectSocket();
   await authClient.signOut();
   router.push("/auth");
 };
@@ -37,13 +37,16 @@ onMounted(async () => {
   }
   user.value = session.user;
 
-  // Determine provider from account schema details or fallback to credentials
-  const provider = session.session?.token ? "github" : "credentials"; // Simple mock determination for Step 2
+  // Connect socket and listen for real-time online count
+  const socket = connectSocket();
+  socket.on("online:count", (count: number) => {
+    onlineCount.value = count;
+  });
 
-  // Set provider-specific meme
-  activeMeme.value = providerMemes[provider]! || providerMemes.credentials;
+  // Determine provider meme — credentials vs OAuth
+  const provider = session.session?.token ? "github" : "credentials";
+  activeMeme.value = providerMemes[provider] ?? providerMemes.credentials!;
 
-  // Set a random general meme
   const randomIndex = Math.floor(Math.random() * generalMemes.length);
   activeGeneralMeme.value = generalMemes[randomIndex]!;
 
@@ -62,6 +65,10 @@ onMounted(async () => {
     delay: 200,
     ease: "outBack",
   });
+});
+
+onUnmounted(() => {
+  disconnectSocket();
 });
 </script>
 

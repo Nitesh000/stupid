@@ -16,6 +16,7 @@ const envSchema = z.object({
   JWT_SECRET: z.string().default("<jwt-secret-string>"),
   BETTER_AUTH_URL: z.url({ message: "Invalid url" }),
   BETTER_AUTH_SECRET: z.string({ message: "Better auth secret needed" }),
+  REDIS_URL: z.string().default("redis://localhost:6379"),
 });
 
 const parseEnv = envSchema.safeParse(process.env);

@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@repo/db/schema/index";
 import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 if (!db) {
   throw new Error("[BA] DB failed to start.");
@@ -33,6 +34,19 @@ export const auth = betterAuth({
       },
     },
   },
+  databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          // Increment the user's login count on every new session
+          await db!
+            .update(schema.user)
+            .set({ loginCount: sql`${schema.user.loginCount} + 1` })
+            .where(sql`${schema.user.id} = ${session.userId}`);
+        },
+      },
+    },
+  },
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,
@@ -52,3 +66,4 @@ export const auth = betterAuth({
     },
   },
 });
+

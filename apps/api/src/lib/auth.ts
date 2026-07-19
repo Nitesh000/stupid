@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@repo/db/schema/index";
-import { db } from "..";
+import { db } from "./db";
 
 if (!db) {
   throw new Error("[BA] DB failed to start.");
@@ -12,8 +12,26 @@ export const auth = betterAuth({
     provider: "pg",
     schema,
   }),
+  trustedOrigins: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:3000",
+  ],
   emailAndPassword: {
     enabled: true,
+  },
+  user: {
+    additionalFields: {
+      loginCount: {
+        type: "number",
+        required: false,
+        defaultValue: 0,
+      },
+      country: {
+        type: "string",
+        required: false,
+      },
+    },
   },
   socialProviders: {
     github: {
@@ -24,7 +42,6 @@ export const auth = betterAuth({
       clientId: process.env.ATLASSIAN_CLIENT_ID as string,
       clientSecret: process.env.ATLASSIAN_CLIENT_SECRET as string,
     },
-
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID as string,
       clientSecret: process.env.DISCORD_CLIENT_SECRET as string,

@@ -1,12 +1,14 @@
 import fastify, { type FastifyServerOptions } from "fastify";
+import cors from "@fastify/cors";
 import { env } from "./config/env";
-import { authRoutes } from "./routes/auth.route";
 import { healthRoutes } from "./routes/health.route";
 import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
-import { DBConnection } from "./config/db";
+import { closeDB } from "./lib/db";
+import { auth } from "./lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 import { errorHandler, notFoundHandler } from "./plugins/error.plugin";
 
 const logger: FastifyServerOptions["logger"] =
@@ -34,16 +36,37 @@ const app = fastify({
 app.setErrorHandler(errorHandler);
 app.setNotFoundHandler(notFoundHandler);
 
-const dbConnection = new DBConnection(app.log);
-export const { db, pool } = dbConnection.getConnection();
-
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
 const registerRoutes = async () => {
   try {
+    // Register CORS
+    await app.register(cors, {
+      origin: true,
+      credentials: true,
+    });
+
     await app.register(healthRoutes, { prefix: "/api" });
-    await app.register(authRoutes, { prefix: "/api/auth" });
+
+    // Better Auth Catch-All route
+    app.all("/api/auth/*", async (request, reply) => {
+      const url = new URL(request.url, `http://${request.headers.host}`);
+      const headers = fromNodeHeaders(request.headers);
+
+      const req = new Request(url.toString(), {
+        method: request.method,
+        headers,
+        ...(request.body ? { body: JSON.stringify(request.body) } : {}),
+      });
+
+      const response = await auth.handler(req);
+
+      reply.status(response.status);
+      response.headers.forEach((value, key) => reply.header(key, value));
+      return reply.send(response.body ? await response.text() : null);
+    });
+
     app.log.info("[APP] Routes registered");
   } catch (e) {
     app.log.error({ error: e }, "[APP] Failed to register routes");
@@ -62,8 +85,8 @@ const gracefullyShutdown = async (signal: string) => {
   // force exit if timeout passes
   const forceExit = new Promise((_, reject) => {
     timeoutId = setTimeout(() => {
-      reject(new Error(`Shutting timeout after ${shutdownTimeout}ms`));
-    });
+      reject(new Error(`Shutdown timeout after ${shutdownTimeout}ms`));
+    }, shutdownTimeout);
   });
 
   try {
@@ -72,7 +95,7 @@ const gracefullyShutdown = async (signal: string) => {
         await app.close();
         app.log.info("[APP] Fastify server closed");
 
-        await dbConnection.close();
+        await closeDB();
 
         app.log.info("[APP] Graceful shutdown completed");
       })(),
@@ -140,7 +163,7 @@ const startServer = async () => {
     app.log.fatal({ err }, "[APP] API startup failed");
 
     // attempt to close the db connection
-    await dbConnection.close();
+    await closeDB();
     process.exit(1);
   }
 };

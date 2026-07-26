@@ -19,7 +19,10 @@ const envSchema = z.object({
   REDIS_URL: z.string().default("redis://localhost:6379"),
 });
 
-const parseEnv = envSchema.safeParse(process.env);
+const parseEnv = envSchema.safeParse({
+  ...process.env,
+  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || process.env.RENDER_EXTERNAL_URL,
+});
 
 if (!parseEnv.success) {
   console.error(

@@ -1,0 +1,44 @@
+# render.yaml — Render Blueprint Specification for Stupid Monorepo
+# https://render.com/docs/blueprint-spec
+
+databases:
+  - name: stupid-db
+    plan: free
+    region: oregon
+
+services:
+  - type: keyvalue
+    name: stupid-redis
+    plan: free
+    region: oregon
+    ipAllowList: [] # strictly internal access only
+
+  - type: web
+    name: stupid-api
+    plan: free
+    runtime: node
+    region: oregon
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
+    startCommand: pnpm --filter api start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: PG_DB_URL
+        fromDatabase:
+          name: stupid-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: stupid-redis
+          type: keyvalue
+          property: connectionString
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true

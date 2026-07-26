@@ -17,12 +17,18 @@ const envSchema = z.object({
   BETTER_AUTH_URL: z.url({ message: "Invalid url" }),
   BETTER_AUTH_SECRET: z.string({ message: "Better auth secret needed" }),
   REDIS_URL: z.string().default("redis://localhost:6379"),
+  CORS_ORGINS: z
+    .string()
+    .default("")
+    .transform((val) =>
+      val
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ),
 });
 
-const parseEnv = envSchema.safeParse({
-  ...process.env,
-  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || process.env.RENDER_EXTERNAL_URL,
-});
+const parseEnv = envSchema.safeParse(process.env);
 
 if (!parseEnv.success) {
   console.error(

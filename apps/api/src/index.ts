@@ -46,7 +46,7 @@ const registerRoutes = async () => {
   try {
     // Register CORS
     await app.register(cors, {
-      origin: true,
+      origin: env.CORS_ORGINS,
       credentials: true,
     });
 
@@ -159,11 +159,7 @@ const startServer = async () => {
     });
 
     // Initialise Socket.io on the HTTP server after Fastify starts
-    initSocketIO(app.server, [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:3000",
-    ]);
+    initSocketIO(app.server, env.CORS_ORGINS);
 
     app.log.info(
       {

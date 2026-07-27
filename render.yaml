@@ -1,18 +1,7 @@
 # render.yaml — Render Blueprint Specification for Stupid Monorepo
 # https://render.com/docs/blueprint-spec
 
-databases:
-  - name: stupid-db
-    plan: free
-    region: oregon
-
 services:
-  - type: keyvalue
-    name: stupid-redis
-    plan: free
-    region: oregon
-    ipAllowList: [] # strictly internal access only
-
   - type: web
     name: stupid-api
     plan: free

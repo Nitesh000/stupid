@@ -7,8 +7,8 @@ services:
     plan: free
     runtime: node
     region: oregon
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
-    startCommand: pnpm --filter api start
+    # buildCommand: pnpm install --frozen-lockfile && pnpm --filter api build
+    startCommand: pnpm --filter api dev
     envVars:
       - key: NODE_ENV
         value: production

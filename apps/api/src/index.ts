@@ -156,6 +156,7 @@ const startServer = async () => {
 
     await app.listen({
       port: env.PORT,
+      host: "0.0.0.0",
     });
 
     // Initialise Socket.io on the HTTP server after Fastify starts
